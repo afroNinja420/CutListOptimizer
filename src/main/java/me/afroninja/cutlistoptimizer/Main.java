@@ -9,6 +9,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,10 +17,15 @@ import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import me.afroninja.cutlistoptimizer.Model.Panel;
 import me.afroninja.cutlistoptimizer.Model.StockSheet;
 import me.afroninja.cutlistoptimizer.Model.OptimizationResult;
+import me.afroninja.cutlistoptimizer.Optimization.Optimizer;
 import me.afroninja.cutlistoptimizer.UI.LoadingOverlay;
 import me.afroninja.cutlistoptimizer.UI.StatisticsUpdater;
 
