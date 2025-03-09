@@ -20,16 +20,12 @@ public class Optimizer {
                                 Map<String, OptimizationResult> bestResult, double usedArea, double totalArea,
                                 int totalCuts, int currentSheetIndex, LoadingOverlay loadingOverlay,
                                 Runnable updateStatistics) {
-        // Use arrays to allow modification of primitive parameters within the lambda
         final double[] usedAreaArray = {usedArea};
         final double[] totalAreaArray = {totalArea};
         final int[] totalCutsArray = {totalCuts};
         final int[] currentSheetIndexArray = {currentSheetIndex};
 
-        // Create a final reference to loadingOverlay to ensure it is effectively final
         final LoadingOverlay finalLoadingOverlay = loadingOverlay;
-
-        // Use a local AtomicBoolean for this specific optimization task
         final AtomicBoolean stopOptimization = new AtomicBoolean(false);
 
         Task<OptimizationResult> optimizationTask = new Task<>() {
@@ -58,7 +54,6 @@ public class Optimizer {
 
                 panelsToOptimize.sort((p1, p2) -> Double.compare(p2.getLength() * p2.getWidth(), p1.getLength() * p1.getWidth()));
 
-                // Use local variables to compute results
                 Map<String, OptimizationResult> localBestResult = new HashMap<>();
                 localBestResult.clear();
 
@@ -85,11 +80,10 @@ public class Optimizer {
 
                     updateProgress(currentStep, totalSteps);
                     updateMessage(String.format("Searching for best solution - %.0f%%", best.getWastePercentage()));
-                    Thread.sleep(50); // Simulate processing time
+                    Thread.sleep(50);
                 }
 
                 if (best != null) {
-                    // Draw the best result
                     GraphicsContext gc = canvas.getGraphicsContext2D();
                     gc.setFill(javafx.scene.paint.Color.WHITE);
                     gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -101,7 +95,7 @@ public class Optimizer {
                     double scaleFactor = 5.0;
 
                     List<Rectangle> rectangles = best.getRectangles();
-                    List<StockSheet> localUsedSheets = best.getUsedSheets(); // Access directly from best
+                    List<StockSheet> localUsedSheets = best.getUsedSheets();
                     for (int i = 0; i < localUsedSheets.size(); i++) {
                         StockSheet sheet = localUsedSheets.get(i);
                         double sheetLength = sheet.getLength() * scaleFactor;
@@ -133,9 +127,8 @@ public class Optimizer {
                         }
                     }
 
-                    // Store localBestResult in the Task's value so it can be accessed in onSucceeded
                     if (best != null) {
-                        best.setCustomData(localBestResult); // Store the map
+                        best.setCustomData(localBestResult);
                     }
                 }
 
@@ -146,21 +139,20 @@ public class Optimizer {
         optimizationTask.setOnSucceeded(event -> {
             OptimizationResult best = optimizationTask.getValue();
             if (best != null) {
-                // Update the original parameters with the computed results from best
                 usedSheets.clear();
                 usedSheets.addAll(best.getUsedSheets());
                 unplacedPanels.clear();
                 unplacedPanels.addAll(best.getUnplacedPanels());
                 bestResult.clear();
                 @SuppressWarnings("unchecked")
-                Map<String, OptimizationResult> localBestResult = (Map<String, OptimizationResult>) best.getCustomData(); // Retrieve the custom data
+                Map<String, OptimizationResult> localBestResult = (Map<String, OptimizationResult>) best.getCustomData();
                 if (localBestResult != null) {
                     bestResult.putAll(localBestResult);
                 }
                 usedAreaArray[0] = best.getUsedArea();
                 totalAreaArray[0] = best.getTotalArea();
                 totalCutsArray[0] = best.getTotalCuts();
-                currentSheetIndexArray[0] = 0; // Reset to first sheet for display
+                currentSheetIndexArray[0] = 0;
                 updateStatistics.run();
             }
             finalLoadingOverlay.hideLoadingOverlay();
@@ -180,13 +172,12 @@ public class Optimizer {
         finalLoadingOverlay.getProgressBar().progressProperty().bind(optimizationTask.progressProperty());
         finalLoadingOverlay.getProgressLabel().textProperty().bind(optimizationTask.messageProperty());
         finalLoadingOverlay.getStopButton().setOnAction(e -> {
-            stopOptimization.set(true); // Modify the local AtomicBoolean
+            stopOptimization.set(true);
             finalLoadingOverlay.hideLoadingOverlay();
         });
 
         new Thread(optimizationTask).start();
 
-        // Update the original primitive parameters after the task starts
         usedArea = usedAreaArray[0];
         totalArea = totalAreaArray[0];
         totalCuts = totalCutsArray[0];

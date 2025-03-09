@@ -1,9 +1,8 @@
 package me.afroninja.cutlistoptimizer.Model;
 
-import javafx.beans.property.*;
-
 public class Panel {
-    private double length, width;
+    private double length;
+    private double width;
     private int quantity;
     private String label;
 
@@ -14,26 +13,13 @@ public class Panel {
         this.label = label;
     }
 
+    // Getters and setters
     public double getLength() { return length; }
-    public double getWidth() { return width; }
-    public int getQuantity() { return quantity; }
-    public String getLabel() { return label; }
-
     public void setLength(double length) { this.length = length; }
+    public double getWidth() { return width; }
     public void setWidth(double width) { this.width = width; }
+    public int getQuantity() { return quantity; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
+    public String getLabel() { return label; }
     public void setLabel(String label) { this.label = label; }
-
-    public DoubleProperty lengthProperty() {
-        return new SimpleDoubleProperty(length);
-    }
-    public DoubleProperty widthProperty() {
-        return new SimpleDoubleProperty(width);
-    }
-    public IntegerProperty quantityProperty() {
-        return new SimpleIntegerProperty(quantity);
-    }
-    public StringProperty labelProperty() {
-        return new SimpleStringProperty(label);
-    }
 }
